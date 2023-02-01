@@ -1,5 +1,60 @@
 libronin 0.7
 
+how to build 
+
+sudo mkdir -p /opt/toolchains/dc/roninchain
+sudo chown -R $USER:$USER /opt/toolchains/dc/roninchain
+
+wget ftp.gnu.org/gnu/binutils/binutils-2.34.tar.xz
+wget ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.xz
+wget gcc.gnu.org/pub/gcc/infrastructure/gmp-6.1.0.tar.bz2
+wget gcc.gnu.org/pub/gcc/infrastructure/mpfr-3.1.4.tar.bz2
+wget gcc.gnu.org/pub/gcc/infrastructure/mpc-1.0.3.tar.gz
+wget sourceware.org/pub/newlib/newlib-3.3.0.tar.gz
+
+tar -xf binutils-2.34.tar.xz
+mkdir binutils-2.34-build
+cd binutils-2.34-build
+CC=gcc-9 ../binutils-2.34/configure --prefix=/opt/toolchains/dc/roninchain --target=sh-elf --without-headers --with-newlib --enable-languages=c
+make
+make install
+cd ..
+
+export PATH=/opt/toolchains/dc/roninchain/bin:$PATH
+
+tar -xf gcc-9.3.0.tar.xz
+mkdir gcc-9.3.0-build1
+
+tar jxf gmp-6.1.0.tar.bz2
+mv gmp-6.1.0 gcc-9.3.0/gmp
+
+tar jxf mpfr-3.1.4.tar.bz2
+mv mpfr-3.1.4 gcc-9.3.0/mpfr
+
+tar zxf mpc-1.0.3.tar.gz
+mv mpc-1.0.3 gcc-9.3.0/mpc
+
+cd gcc-9.3.0-build1
+CC=gcc-9 ../gcc-9.3.0/configure --prefix=/opt/toolchains/dc/roninchain --target=sh-elf --without-headers --with-newlib --enable-languages=c --disable-libssp
+make
+make install
+cd ..
+
+tar zxf newlib-3.3.0.tar.gz
+mkdir newlib-3.3.0-build
+cd newlib-3.3.0-build
+CC=gcc-9 ../newlib-3.3.0/configure --prefix=/opt/toolchains/dc/roninchain --target=sh-elf
+make
+make install
+cd ..
+
+mkdir gcc-9.3.0-build2
+cd gcc-9.3.0-build2
+CC=gcc-9 ../gcc-9.3.0/configure --prefix=/opt/toolchains/dc/roninchain --target=sh-elf --with-newlib --enable-languages=c,c++
+make
+make install
+cd ..
+
 This is alpha software, and there is no documentation. You are on your
 own at the moment. If there is something you wonder about the authors
 can probably answer if you ask nicely.
